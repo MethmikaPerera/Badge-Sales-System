@@ -18,7 +18,7 @@ import model.MySQL;
  * @author mamet
  */
 public class BadgesWindow extends javax.swing.JFrame {
-    
+
     public static HashMap<String, Object> badgeMap = new HashMap<>();
 
     /**
@@ -27,33 +27,34 @@ public class BadgesWindow extends javax.swing.JFrame {
     public BadgesWindow() {
         initComponents();
         AppIcon.setAppIcon(this);
-        
+
         loadBadgeData();
     }
-    
+
     private void loadBadgeData() {
-        
+
         try {
-            
-            DefaultTableModel badgeTableModel = (DefaultTableModel) badgeTable.getModel();
-            badgeTableModel.setRowCount(0);
-            
+
             ResultSet resultSet = MySQL.executeSearch("SELECT * FROM `badges` INNER JOIN `section` ON `badges`.`section_id` = `section`.`id`");
-            
-            while (resultSet.next()) {                
+
+            while (resultSet.next()) {
                 
-                Vector vector = new Vector();
+                
+
+                Vector<String> vector = new Vector();
                 vector.add(resultSet.getString("badge_no"));
                 vector.add(resultSet.getString("badge_name"));
                 vector.add(resultSet.getString("section.name"));
+
+                DefaultTableModel badgeTableModel = (DefaultTableModel) badgeTable.getModel();
                 badgeTableModel.addRow(vector);
-                
+
             }
-            
+
         } catch (Exception e) {
             SplashWindow.logger.log(Level.SEVERE, "Exception occured while loading badge data", e);
         }
-        
+
     }
 
     /**

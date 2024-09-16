@@ -8,7 +8,7 @@ package model;
  *
  * @author mamet
  */
-public class badgeItem {
+public class BadgeItem {
     private int badgeId;
     private String badgeNo;
     private String badgeName;
