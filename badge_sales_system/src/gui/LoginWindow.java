@@ -8,23 +8,25 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
+import model.AppIcon;
 import model.MySQL;
-import model.userData;
+import model.UserData;
+import model.ValidateEmail;
 
 /**
  *
  * @author mamet
  */
 public class LoginWindow extends javax.swing.JFrame {
-    
-    public static userData userdata = new userData();
+
+    public static UserData userdata = new UserData();
 
     /**
      * Creates new form LoginWindow
      */
     public LoginWindow() {
-        initComponents();        
-        SplashWindow.setAppIcon(this);
+        initComponents();
+        AppIcon.setAppIcon(this);
     }
 
     /**
@@ -56,6 +58,7 @@ public class LoginWindow extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
         jLabel2.setText("Badge Sales System Log In");
 
+        emailField.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         emailField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 emailFieldActionPerformed(evt);
@@ -65,6 +68,7 @@ public class LoginWindow extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         jLabel3.setText("Email");
 
+        passwordField.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         passwordField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 passwordFieldActionPerformed(evt);
@@ -152,37 +156,43 @@ public class LoginWindow extends javax.swing.JFrame {
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         String email = emailField.getText();
         String password = String.valueOf(passwordField.getPassword());
-        
+
         if (email.isBlank()) {
             JOptionPane.showMessageDialog(this, "Please Enter Your Email", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please Enter Your Password", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (!email.matches("^(?=.{1,64}@)[A-Za-z0-9\\+_-]+(\\.[A-Za-z0-9\\+_-]+)*@[^-][A-Za-z0-9\\+-]+(\\.[A-Za-z0-9\\+-]+)*(\\.[A-Za-z]{2,})$")) {
-            JOptionPane.showMessageDialog(this, "Invalid Email Address", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            try {
-                
-                ResultSet resultSet = MySQL.executeSearch("SELECT * FROM `users` INNER JOIN `user_role` ON `users`.`user_role_id` = `user_role`.`id`  WHERE `email`='"+email+"' AND `password`='"+password+"'");
-                
-                if (resultSet.next()) {
-                    
-                    userdata.setUserId(resultSet.getInt("users.id"));
-                    userdata.setFirstName(resultSet.getString("users.first_name"));
-                    userdata.setLastName(resultSet.getString("users.last_name"));
-                    userdata.setEmail(email);
-                    userdata.setPassword(password);
-                    userdata.setUserRoleId(resultSet.getInt("users.user_role_id"));
-                    userdata.setUserRole(resultSet.getString("user_role.role"));
-                    
-                    this.dispose();
-                    new HomeWindow().setVisible(true);
-                    
-                } else {
-                    JOptionPane.showMessageDialog(this, "Incorrect Email Address or Password", "Error", JOptionPane.ERROR_MESSAGE);
+
+            ValidateEmail validateEmail = new ValidateEmail();
+            String result = validateEmail.isValidEmail(email);
+
+            if (result == "success") {
+                try {
+
+                    ResultSet resultSet = MySQL.executeSearch("SELECT * FROM `users` INNER JOIN `user_role` ON `users`.`user_role_id` = `user_role`.`id`  WHERE `email`='" + email + "' AND `password`='" + password + "'");
+
+                    if (resultSet.next()) {
+
+                        userdata.setUserId(resultSet.getInt("users.id"));
+                        userdata.setFirstName(resultSet.getString("users.first_name"));
+                        userdata.setLastName(resultSet.getString("users.last_name"));
+                        userdata.setEmail(email);
+                        userdata.setPassword(password);
+                        userdata.setUserRoleId(resultSet.getInt("users.user_role_id"));
+                        userdata.setUserRole(resultSet.getString("user_role.role"));
+
+                        this.dispose();
+                        new HomeWindow().setVisible(true);
+
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Incorrect Email Address or Password", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } catch (Exception e) {
+                    SplashWindow.logger.log(Level.SEVERE, "Exception Occured During Log In", e);
                 }
-                
-            } catch (Exception e) {
-                SplashWindow.logger.log(Level.SEVERE, "Exception Occured During Log In", e);
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid Email Address", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_loginButtonActionPerformed

@@ -8,7 +8,7 @@ package model;
  *
  * @author mamet
  */
-public class userData {
+public class UserData {
     
     private int userId;
     private String firstName;

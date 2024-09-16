@@ -5,9 +5,8 @@
 package gui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import java.awt.Frame;
 import java.util.logging.*;
-import javax.swing.ImageIcon;
+import model.AppIcon;
 
 /**
  *
@@ -25,7 +24,7 @@ public class SplashWindow extends javax.swing.JFrame {
     public SplashWindow() {
         initComponents();
         
-        setAppIcon(this);
+        AppIcon.setAppIcon(this);
 
         try {
             FileHandler fileHandler = new FileHandler("app.log");
@@ -40,9 +39,9 @@ public class SplashWindow extends javax.swing.JFrame {
         loadingAnimation();
     }
     
-    public static void setAppIcon(Frame window) {
-        window.setIconImage(new ImageIcon(SplashWindow.class.getResource("/resources/app-icon.png")).getImage());
-    }
+//    public static void setAppIcon(Frame window) {
+//        window.setIconImage(new ImageIcon(SplashWindow.class.getResource("/resources/app-icon.png")).getImage());
+//    }
 
     private void loadingAnimation() {
         Thread t = new Thread(new Runnable() {
