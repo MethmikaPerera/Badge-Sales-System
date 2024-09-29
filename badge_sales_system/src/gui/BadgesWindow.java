@@ -17,10 +17,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.BadgeItem;
 import model.MySQL;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
@@ -29,7 +27,7 @@ import net.sf.jasperreports.view.JasperViewer;
  * @author mamet
  */
 public class BadgesWindow extends javax.swing.JFrame {
-    
+
     public static HashMap<Integer, Object> badgeMap = new HashMap<>();
 
     /**
@@ -38,74 +36,74 @@ public class BadgesWindow extends javax.swing.JFrame {
     public BadgesWindow() {
         initComponents();
         AppIcon.setAppIcon(this);
-        
+
         loadBadgeData();
         loadSections();
     }
-    
+
     private void loadBadgeData() {
-        
+
         try {
-            
+
             ResultSet resultSet = MySQL.executeSearch("SELECT * FROM `badges` INNER JOIN `section` ON `badges`.`section_id` = `section`.`id`");
-            
+
             while (resultSet.next()) {
-                
+
                 BadgeItem badgeItem = new BadgeItem();
                 badgeItem.setBadgeId(resultSet.getInt("badges.id"));
                 badgeItem.setBadgeNo(resultSet.getString("badge_no"));
                 badgeItem.setBadgeName(resultSet.getString("badge_name"));
                 badgeItem.setSectionId(resultSet.getInt("section.id"));
                 badgeItem.setSectionName(resultSet.getString("section.name"));
-                
+
                 badgeMap.put(resultSet.getInt("badges.id"), badgeItem);
-                
+
                 Vector<String> vector = new Vector();
                 vector.add(resultSet.getString("badge_no"));
                 vector.add(resultSet.getString("badge_name"));
                 vector.add(resultSet.getString("section.name"));
-                
+
                 DefaultTableModel badgeTableModel = (DefaultTableModel) badgeTable.getModel();
                 badgeTableModel.addRow(vector);
-                
+
             }
-            
+
         } catch (Exception e) {
             SplashWindow.logger.log(Level.SEVERE, "Exception occured while loading badge data", e);
         }
-        
+
     }
-    
+
     private void loadSections() {
-        
+
         try {
             ResultSet resultSet = MySQL.executeSearch("SELECT * FROM `section` ORDER BY `id` ASC");
-            
+
             Vector<String> vector = new Vector<>();
             vector.add("Select Section");
-            
+
             while (resultSet.next()) {
                 vector.add(resultSet.getString("section.name"));
             }
-            
+
             DefaultComboBoxModel sectionModel = new DefaultComboBoxModel(vector);
             addSectionBox.setModel(sectionModel);
             searchSectionBox.setModel(sectionModel);
-            
+
         } catch (Exception e) {
             SplashWindow.logger.log(Level.SEVERE, "Exception occured while loading section data", e);
         }
-        
+
     }
-    
+
     private void loadSearchData() {
-        
+
         String badgeNo = searchBadgeNumberField.getText();
         String badgeName = searchBadgeNameField.getText();
         int sectionId = searchSectionBox.getSelectedIndex();
-        
+
         String query = "SELECT * FROM `badges` INNER JOIN `section` ON `badges`.`section_id` = `section`.`id` ";
-        
+
         if (!badgeNo.isBlank()) {
             if (query.contains("WHERE")) {
                 query += "AND `badge_no` LIKE '%" + badgeNo + "%' ";
@@ -115,7 +113,7 @@ public class BadgesWindow extends javax.swing.JFrame {
         } else {
             query += "";
         }
-        
+
         if (!badgeName.isBlank()) {
             if (query.contains("WHERE")) {
                 query += "AND `badge_name` LIKE '%" + badgeName + "%' ";
@@ -125,7 +123,7 @@ public class BadgesWindow extends javax.swing.JFrame {
         } else {
             query += "";
         }
-        
+
         if (sectionId != 0) {
             if (query.contains("WHERE")) {
                 query += "AND `section_id`='" + sectionId + "' ";
@@ -135,35 +133,41 @@ public class BadgesWindow extends javax.swing.JFrame {
         } else {
             query += "";
         }
-        
+
         try {
             ResultSet resultSet = MySQL.executeSearch(query);
-            
+
             DefaultTableModel badgeTableModel = (DefaultTableModel) badgeTable.getModel();
             badgeTableModel.setRowCount(0);
-            
-            while (resultSet.next()) {                
+
+            while (resultSet.next()) {
                 BadgeItem badgeItem = new BadgeItem();
                 badgeItem.setBadgeId(resultSet.getInt("badges.id"));
                 badgeItem.setBadgeNo(resultSet.getString("badge_no"));
                 badgeItem.setBadgeName(resultSet.getString("badge_name"));
                 badgeItem.setSectionId(resultSet.getInt("section.id"));
                 badgeItem.setSectionName(resultSet.getString("section.name"));
-                
+
                 badgeMap.put(resultSet.getInt("badges.id"), badgeItem);
-                
+
                 Vector<String> vector = new Vector();
                 vector.add(resultSet.getString("badge_no"));
                 vector.add(resultSet.getString("badge_name"));
                 vector.add(resultSet.getString("section.name"));
-                
+
                 badgeTableModel.addRow(vector);
             }
-            
+
         } catch (Exception e) {
             SplashWindow.logger.log(Level.SEVERE, "Exception occured while loading search data", e);
         }
-        
+
+    }
+
+    private void clearFields() {
+        addBadgeNumberField.setText("");
+        addBadgeNameField.setText("");
+        addSectionBox.setSelectedIndex(0);
     }
 
     /**
@@ -275,6 +279,7 @@ public class BadgesWindow extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Roboto", 1, 26)); // NOI18N
         jLabel1.setText("Badges");
 
+        badgeTable.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         badgeTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -399,7 +404,7 @@ public class BadgesWindow extends javax.swing.JFrame {
         String badgeNo = addBadgeNumberField.getText();
         String badgeName = addBadgeNameField.getText();
         int sectionId = addSectionBox.getSelectedIndex();
-        
+
         if (badgeNo.isBlank()) {
             JOptionPane.showMessageDialog(this, "Enter the Badge Number", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (badgeName.isBlank()) {
@@ -409,6 +414,9 @@ public class BadgesWindow extends javax.swing.JFrame {
         } else {
             try {
                 MySQL.executeIUD("INSERT INTO `badges`(`badge_no`,`badge_name`,`section_id`)");
+                JOptionPane.showMessageDialog(this, "Successfully Added the " + badgeName + " Badge", "Success", JOptionPane.INFORMATION_MESSAGE);
+                loadBadgeData();
+                clearFields();
             } catch (Exception e) {
                 SplashWindow.logger.log(Level.SEVERE, "Exception occured while Adding Badge", e);
             }
@@ -430,23 +438,25 @@ public class BadgesWindow extends javax.swing.JFrame {
     private void printBadgeListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBadgeListButtonActionPerformed
         try {
             String path = "src//reports//badge_report.jasper";
-            
+
             String fullName = LoginWindow.userdata.getFirstName() + " " + LoginWindow.userdata.getLastName();
             String role = LoginWindow.userdata.getUserRole();
             String email = LoginWindow.userdata.getEmail();
             String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            
+            String img = "src/resources/app-icon.png";
+
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("Parameter1", fullName);
             parameters.put("Parameter2", role);
             parameters.put("Parameter3", email);
             parameters.put("Parameter4", dateTime);
-            
+            parameters.put("Parameter5", img);
+
             JRTableModelDataSource dataSource = new JRTableModelDataSource(badgeTable.getModel());
-            
+
             JasperPrint jasperPrint = JasperFillManager.fillReport(path, parameters, dataSource);
             JasperViewer.viewReport(jasperPrint, false);
-            
+
         } catch (Exception e) {
             SplashWindow.logger.log(Level.SEVERE, "Exception occured while print badge list report", e);
         }

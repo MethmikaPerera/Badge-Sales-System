@@ -7,18 +7,61 @@ package gui;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import model.AppIcon;
 
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.logging.Level;
+import model.CustomerIndividual;
+import model.MySQL;
+
 /**
  *
  * @author mamet
  */
 public class CustomersWindow extends javax.swing.JFrame {
 
+    public static HashMap<Integer, Object> customerMap = new HashMap<>();
+    
     /**
      * Creates new form CustomersWindow
      */
     public CustomersWindow() {
         initComponents();
         AppIcon.setAppIcon(this);
+        
+        loadCustomersData();
+    }
+    
+    private void clearFields() {
+        addNameField.setText("");
+        addNicField.setText("");
+        addEmailField.setText("");
+        addContactField.setText("");
+        genderSelectionGroup.clearSelection();
+    }
+    
+    private void loadCustomersData() {
+        
+        try {
+            
+            ResultSet resultSet = MySQL.executeSearch("SELECT * FROM `customer` INNER JOIN `gender` ON `customer`.`gender_id`=`gender`.`id` ORDER BY `customer`.`id` ASC");
+            
+            while (resultSet.next()) {                
+                CustomerIndividual customer = new CustomerIndividual();
+                customer.setId(resultSet.getInt("customer.id"));
+                customer.setName(resultSet.getString("customer.name"));
+                customer.setEmail(resultSet.getString("customer.email"));
+                customer.setContact(resultSet.getString("customer.contact_no"));
+                customer.setNic(resultSet.getString("customer.nic"));
+                customer.setGenderId(resultSet.getInt("gender.id"));
+                customer.setGender(resultSet.getString("gender.type"));
+                
+                customerMap.put(resultSet.getInt("customer.id"), customer);
+            }
+            
+        } catch (Exception e) {
+            SplashWindow.logger.log(Level.SEVERE, "Exception occured while loading customer data", e);
+        }
+        
     }
 
     /**
@@ -30,34 +73,213 @@ public class CustomersWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        genderSelectionGroup = new javax.swing.ButtonGroup();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        addNameField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        addEmailField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        addContactField = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        addNicField = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        selectMale = new javax.swing.JRadioButton();
+        selectFemale = new javax.swing.JRadioButton();
+        addCustomerButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        nicField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        mobileField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        customerTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Customers");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1043, Short.MAX_VALUE)
+        jLabel1.setFont(new java.awt.Font("Roboto", 1, 26)); // NOI18N
+        jLabel1.setText("Customers");
+
+        jPanel2.setBackground(new java.awt.Color(51, 51, 51));
+
+        jLabel8.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
+        jLabel8.setText("Add a Customer");
+
+        addNameField.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+
+        jLabel4.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        jLabel4.setText("Name");
+
+        jLabel5.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        jLabel5.setText("Email");
+
+        addEmailField.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+
+        jLabel6.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        jLabel6.setText("Contact No");
+
+        addContactField.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        jLabel7.setText("NIC");
+
+        addNicField.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+
+        jLabel9.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        jLabel9.setText("Gender");
+
+        genderSelectionGroup.add(selectMale);
+        selectMale.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        selectMale.setActionCommand("1");
+        selectMale.setText("Male");
+
+        genderSelectionGroup.add(selectFemale);
+        selectFemale.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        selectFemale.setActionCommand("2");
+        selectFemale.setText("Female");
+
+        addCustomerButton.setBackground(new java.awt.Color(0, 102, 0));
+        addCustomerButton.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        addCustomerButton.setText("Add Customer");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4)
+                            .addComponent(addNameField)
+                            .addComponent(addEmailField)
+                            .addComponent(addContactField)
+                            .addComponent(addNicField)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(23, 23, 23)
+                                .addComponent(selectMale)
+                                .addGap(32, 32, 32)
+                                .addComponent(selectFemale))
+                            .addComponent(addCustomerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(24, 24, 24))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(99, 99, 99))))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 660, Short.MAX_VALUE)
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jLabel8)
+                .addGap(41, 41, 41)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addEmailField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addContactField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addNicField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(selectMale)
+                    .addComponent(selectFemale))
+                .addGap(34, 34, 34)
+                .addComponent(addCustomerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jLabel2.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        jLabel2.setText("NIC");
+
+        nicField.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        jLabel3.setText("Mobile");
+
+        mobileField.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+
+        customerTable.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        customerTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Email", "Contact No", "NIC", "Gender"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(customerTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1)
+                            .addComponent(nicField, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(mobileField, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(29, 29, 29))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 644, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(mobileField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nicField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(12, 12, 12)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -76,6 +298,27 @@ public class CustomersWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField addContactField;
+    private javax.swing.JButton addCustomerButton;
+    private javax.swing.JTextField addEmailField;
+    private javax.swing.JTextField addNameField;
+    private javax.swing.JTextField addNicField;
+    private javax.swing.JTable customerTable;
+    private javax.swing.ButtonGroup genderSelectionGroup;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField mobileField;
+    private javax.swing.JTextField nicField;
+    private javax.swing.JRadioButton selectFemale;
+    private javax.swing.JRadioButton selectMale;
     // End of variables declaration//GEN-END:variables
 }
